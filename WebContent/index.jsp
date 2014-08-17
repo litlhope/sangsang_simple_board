@@ -14,14 +14,24 @@
 </head>
 <body>
 <%
+/* DB 컨넥션을 위해서는 Connection Interface가 필요합니다. */
 Connection conn = null;
 Statement stmt = null;
 
+/*
+ * DB 컨넥션 정보입니다.
+ * jdbc:mysql://localhost/test 까지 필요합니다.
+ * test는 database 이름입니다.
+ */
 String url = "jdbc:mysql://localhost/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8";
 String id = "test";
 String pw = "test123";
 
 try {
+	/* 
+	 * DB Driver로 mysql Driver를 이용합니다. 
+	 * 이곳의 Driver 클래스명을 변경함으로써 Oracle DB, MSSql 등을 사용 할 수 있습니다.(이론적으로는...)
+	 */
 	Class.forName("com.mysql.jdbc.Driver");
 	conn = DriverManager.getConnection(url, id, pw);
 	stmt = conn.createStatement();
@@ -31,14 +41,18 @@ try {
 	return;
 }
 
+/* SELECT 결과를 받기 위해서는 ResultSet이 필요합니다.*/
 ResultSet rset = null;
 ArrayList<Board> boardList = new ArrayList<Board>();
+/* ResultSet을 직관(?)적으로 사용 할 수 있도록 Board(Model - 이것은 차후에 설명합니다.)를 이용합니다. */
 Board board = null;
 
 String sql = "";
 
 sql = "SELECT id, name, contents, reg_dt FROM board ORDER BY reg_dt DESC";
+/* executeQuery는 SELECT를 위한 메소드입니다. 뒤에 executeUpdate도 살펴봅니다. */
 rset = stmt.executeQuery(sql);
+/* ResultSet은 아래와 같은 패턴으로 이용 할 수 있습니다. */
 while (rset.next()) {
 	board = new Board();
 	board.setId(rset.getInt("id"));
